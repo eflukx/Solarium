@@ -1,18 +1,26 @@
-#!/usr/bin/ruby
-require 'ffi'
-
-module Yasdi
+module YasdiMaster
   extend FFI::Library
-  ffi_lib "libyasdimaster"
-
+  ffi_lib ["libyasdimaster", "yasdimaster"]
+  
+  #int yasdiMasterGetVersion( BYTE * major, BYTE * minor, BYTE * release, BYTE * build)
+  attach_function :yasdiMasterGetVersion, [:pointer, :pointer, :pointer, :pointer], :int
+  
   #void yasdiMasterInitialize( char * cIniFileName, DWORD * pDriverCount) 
   attach_function :yasdiMasterInitialize, [:string, :pointer], :void
 
   #void yasdiMasterShutdown( void );
-  attach_function :yasdiMasterShutdown, [:void], :void
+  attach_function :yasdiMasterShutdown, [], :void
 
   #void yasdiReset( void )
-  attach_function :yasdiReset, [:void], :void
+  attach_function :yasdiReset, [], :void
+  
+  #int DoStartDeviceDetection(int iCountDevsToBePresent, BOOL bWaitForDone);
+  attach_function :DoStartDeviceDetection, [:int, :bool], :int
+  
+  #int DoStopDeviceDetection(void);
+  attach_function :DoStopDeviceDetection, [], :int
+  
+  
 
   #DWORD GetDeviceHandles(DWORD * Handles, DWORD iHandleCount)
   attach_function :GetDeviceHandles, [:pointer, :uint], :uint
@@ -46,6 +54,9 @@ module Yasdi
 
   #int SetChannelValue(DWORD dChannelHandle, DWORD dDevHandle, double dblValue).
   attach_function :SetChannelValue, [:uint, :uint, :double], :int
+  
+  #int SetChannelValueString(DWORD dChannelHandle, DWORD dDevHandle, const char * chanvalstr )
+  attach_function :SetChannelValueString, [:uint, :uint, :string], :int
 
   #int GetChannelStatTextCnt(DWORD dChannelHandle)
   attach_function :GetChannelStatTextCnt, [:uint], :int
@@ -55,12 +66,4 @@ module Yasdi
 
   #int GetChannelMask( DWORD dChannelHandle, WORD * ChanType, int * ChanIndex)
   attach_function :GetChannelMask, [:uint, :pointer, :pointer], :int
-
-  #int DoMasterCmdEx(char * cmd, DWORD Param1, DWORD Param2, DWORD Param3)
-#   attach_function :DoMasterCmdEx, [:string, :int, :int, :int], :int
-
 end
-
-DriverCount  = FFI::MemoryPointer.new(:int, 1)
-#puts DriverCount.get_uint16(0)
-Yasdi.yasdiMasterInitialize("/estc/yasdi.ini", DriverCount)

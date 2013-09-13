@@ -2,6 +2,9 @@ module YasdiMaster
   extend FFI::Library
   ffi_lib ["libyasdimaster", "yasdimaster"]
   
+  ################################################################################
+  ## YASDI general functions
+  ################################################################################
   #int yasdiMasterGetVersion( BYTE * major, BYTE * minor, BYTE * release, BYTE * build)
   attach_function :yasdiMasterGetVersion, [:pointer, :pointer, :pointer, :pointer], :int
   
@@ -14,14 +17,30 @@ module YasdiMaster
   #void yasdiReset( void )
   attach_function :yasdiReset, [], :void
   
+  ################################################################################
+  ## Bus driver functions
+  ################################################################################
+  #DWORD yasdiMasterGetDriver(DWORD * DriverHandleArray, int maxHandles);
+  attach_function :yasdiMasterGetDriver, [:pointer, :uint], :uint
+  
+  #BOOL yasdiMasterSetDriverOnline(DWORD DriverID);
+  attach_function :yasdiMasterSetDriverOnline, [:uint], :bool
+  
+  #void yasdiMasterSetDriverOffline(DWORD DriverID);
+  attach_function :yasdiMasterSetDriverOffline, [:uint], :void
+  
+  #BOOL yasdiMasterGetDriverName(DWORD DriverID, char * DestBuffer, DWORD MaxBufferSize);
+  attach_function :yasdiMasterGetDriverName, [:uint, :pointer, :uint], :bool
+  
+  ################################################################################
+  ## Device functions
+  ################################################################################
   #int DoStartDeviceDetection(int iCountDevsToBePresent, BOOL bWaitForDone);
   attach_function :DoStartDeviceDetection, [:int, :bool], :int
   
   #int DoStopDeviceDetection(void);
   attach_function :DoStopDeviceDetection, [], :int
   
-  
-
   #DWORD GetDeviceHandles(DWORD * Handles, DWORD iHandleCount)
   attach_function :GetDeviceHandles, [:pointer, :uint], :uint
 
@@ -33,7 +52,10 @@ module YasdiMaster
 
   #int GetDeviceType(DWORD DevHandle, char * DestBuffer, int len) 
   attach_function :GetDeviceType, [:uint, :pointer, :int], :int
-
+  
+  ################################################################################
+  ## Channel functions
+  ################################################################################
   #DWORD GetChannelHandles(DWORD pdDevHandle, DWORD * pdChanHandles, DWORD dMaxHandleCount, WORD wChanType, BYTE bChanIndex)
   attach_function :GetChannelHandles, [:uint, :pointer, :uint, :int, :short, :uchar], :uint
 

@@ -6,6 +6,8 @@ require './ffi-yasdi'
   def yasdi_init()
     driver_count = FFI::MemoryPointer.new(:uint32)
     YasdiMaster.yasdiMasterInitialize("/etc/yasdi.ini", driver_count)
+    puts YasdiMaster.yasdiMasterSetDriverOnline(0)
+    puts YasdiMaster.yasdiMasterSetDriverOnline(1)
     return driver_count.get_uint(0)  
   end
 
@@ -30,13 +32,11 @@ require './ffi-yasdi'
   end
 
   #returns the number of detected devices
-  def detect_devices
-    max_devices = 1
+  def detect_devices(max_devices = 1)
     return YasdiMaster.DoStartDeviceDetection(max_devices, false)
   end
   
-  def get_device_handles
-    max_devices = 1
+  def get_device_handles(max_devices = 1)
     device_handles = FFI::MemoryPointer.new(:uint32, max_devices)
     YasdiMaster.GetDeviceHandles(device_handles, max_devices)
     return device_handles.get_uint(0)
@@ -52,6 +52,9 @@ print "Initing YASDI. Found " + yasdi_init().to_s + " driver(s).\n"
 
 puts version
 #puts version.values.join('.')
+
+puts "setting driver online"
+#yasdiMasterSetDriverOnline( i );
 
 puts "detect devs \n result:"
 puts detect_devices

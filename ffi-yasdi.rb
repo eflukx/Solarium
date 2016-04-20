@@ -52,18 +52,21 @@ module YasdiMaster
 
   #int GetDeviceType(DWORD DevHandle, char * DestBuffer, int len) 
   attach_function :GetDeviceType, [:uint, :pointer, :int], :int
-  
+
   ################################################################################
   ## Channel functions
   ################################################################################
   #DWORD GetChannelHandles(DWORD pdDevHandle, DWORD * pdChanHandles, DWORD dMaxHandleCount, WORD wChanType, BYTE bChanIndex)
-  attach_function :GetChannelHandles, [:uint, :pointer, :uint, :int, :short, :uchar], :uint
+  attach_function :GetChannelHandles, [:uint, :pointer, :uint, :uint16, :uchar], :uint
 
+  # DWORD FindChannelName(DWORD pdDevHandle, char * ChanName);
+  attach_function :FindChannelName, [:uint, :pointer], :uint
+ 
   #int GetChannelName( DWORD dChanHandle, char * ChanName, DWORD ChanNameMaxBuf);
-  attach_function :GetChannelName, [:uint, :string, :uint], :int
+  attach_function :GetChannelName, [:uint, :pointer, :uint], :int
 
   #int GetChannelValue(DWORD dChannelHandle, DWORD dDeviceHandle, double * dblValue, char * ValText, DWORD dMaxValTextSize, DWORD dMaxChanValAge)
-  attach_function :GetChannelValue, [:uint, :uint, :pointer, :string, :uint, :uint], :int
+  attach_function :GetChannelValue, [:uint, :uint, :pointer, :pointer, :uint, :uint], :int
 
   #DWORD GetChannelValueTimeStamp( DWORD dChannelHandle )
   attach_function :GetChannelValueTimeStamp, [:uint], :uint
